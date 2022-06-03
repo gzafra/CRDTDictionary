@@ -83,6 +83,16 @@ final class CRDTDictionaryTests: XCTestCase {
         XCTAssertEqual(crdtDictionary["key"], "value")
     }
     
+    func testAddItemsWithSameTimestamp() throws {
+        let crdtDictionary = CRDTDictionary<String>()
+        let uniqueTimeStamp = Date.now.timeIntervalSince1970
+        crdtDictionary.add(key: "key", value: "value", timestamp: uniqueTimeStamp)
+        crdtDictionary.add(key: "key", value: "value2", timestamp: uniqueTimeStamp)
+        XCTAssertEqual(crdtDictionary.additions.count, 1)
+        XCTAssertNotNil(crdtDictionary["key"])
+        XCTAssertEqual(crdtDictionary["key"], "value2")
+    }
+    
     // MARK: - Update
     
     /**

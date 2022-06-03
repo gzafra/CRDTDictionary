@@ -26,7 +26,7 @@ public final class CRDTDictionary<ValueType: Hashable>: CRDTDictionaryProtocol {
             return
         }
         
-        if alreadyAdded.timestamp < timestamp {
+        if alreadyAdded.timestamp <= timestamp {
             additions[key] = newValue
         }
     }
@@ -39,7 +39,7 @@ public final class CRDTDictionary<ValueType: Hashable>: CRDTDictionaryProtocol {
             return
         }
         
-        if alreadyRemoved.timestamp < timestamp {
+        if alreadyRemoved.timestamp <= timestamp {
             removals[key] = newValue
         }
     }
