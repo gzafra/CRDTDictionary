@@ -1,12 +1,24 @@
 import Foundation
+import AppKit
 
-public class CRDTDictionary<ValueType: Hashable> {
-    var additions = [String: CRDTElement<ValueType>]()
-    var removals = [String: CRDTElement<ValueType>]()
+
+public protocol CRDTDictionaryProtocol {
+    associatedtype ValueType: Hashable
+    func add(key: String, value: ValueType, timestamp: TimeInterval)
+    func remove(key: String, value: ValueType, timestamp: TimeInterval)
+    func elements() -> [String: CRDTElement<ValueType>]
+    func update(key: String, value: ValueType, timestamp: TimeInterval)
+    func merge(with other: CRDTDictionary<ValueType>)
+    subscript(key: String) -> ValueType? { get }
+}
+
+public final class CRDTDictionary<ValueType: Hashable>: CRDTDictionaryProtocol {
+    internal var additions = [String: CRDTElement<ValueType>]()
+    internal var removals = [String: CRDTElement<ValueType>]()
     
     public init() {}
     
-    func add(key: String, value: ValueType, timestamp: TimeInterval = Date.now.timeIntervalSince1970) {
+    public func add(key: String, value: ValueType, timestamp: TimeInterval = Date.now.timeIntervalSince1970) {
         let newValue = CRDTElement(value: value, timestamp: timestamp)
         
         guard let alreadyAdded = additions[key] else {
@@ -19,7 +31,7 @@ public class CRDTDictionary<ValueType: Hashable> {
         }
     }
     
-    func remove(key: String, value: ValueType, timestamp: TimeInterval = Date.now.timeIntervalSince1970) {
+    public func remove(key: String, value: ValueType, timestamp: TimeInterval = Date.now.timeIntervalSince1970) {
         let newValue = CRDTElement(value: value, timestamp: timestamp)
         
         guard let alreadyRemoved = removals[key] else {
@@ -32,20 +44,20 @@ public class CRDTDictionary<ValueType: Hashable> {
         }
     }
     
-    func allItems() -> [String: CRDTElement<ValueType>] {
+    public func elements() -> [String: CRDTElement<ValueType>] {
         additions.filter { key, addition in
             guard let removed = removals[key] else { return true }
             return removed.timestamp < addition.timestamp
         }
     }
     
-    func update(key: String, value: ValueType, timestamp: TimeInterval = Date.now.gmt.timeIntervalSince1970) {
-        guard allItems()[key] != nil else { return }
+    public func update(key: String, value: ValueType, timestamp: TimeInterval = Date.now.gmt.timeIntervalSince1970) {
+        guard elements()[key] != nil else { return }
         add(key: key, value: value, timestamp: timestamp)
     }
     
     
-    func merge(with other: CRDTDictionary<ValueType>) {
+    public func merge(with other: CRDTDictionary<ValueType>) {
         other.additions.forEach { key, element in
             add(key: key, value: element.value, timestamp: element.timestamp)
         }
@@ -54,35 +66,7 @@ public class CRDTDictionary<ValueType: Hashable> {
         }
     }
     
-    subscript(key: String) -> CRDTElement<ValueType>? {
-        allItems()[key]
-    }
-}
-
-class CRDTElement<T: Hashable>: Hashable {
-    let value: T
-    let timestamp: TimeInterval
-
-    internal init(value: T, timestamp: TimeInterval) {
-        self.value = value
-        self.timestamp = timestamp
-    }
-    
-    static func == (lhs: CRDTElement, rhs: CRDTElement) -> Bool {
-        lhs.value == rhs.value
-    }
-    
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(value)
-    }
-}
-
-
-extension Date {
-    var gmt: Date {
-        let timeZone = TimeZone.current
-        let seconds: TimeInterval = Double(timeZone.secondsFromGMT(for:self))
-        let localDate = Date(timeInterval: seconds, since: self)
-        return localDate
+    public subscript(key: String) -> ValueType? {
+        elements()[key]?.value
     }
 }

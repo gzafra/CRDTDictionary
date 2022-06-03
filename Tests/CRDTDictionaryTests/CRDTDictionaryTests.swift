@@ -23,7 +23,7 @@ final class CRDTDictionaryTests: XCTestCase {
         crdtDictionary.add(key: "key", value: "value2")
         XCTAssertEqual(crdtDictionary.additions.count, 1)
         XCTAssertNotNil(crdtDictionary["key"])
-        XCTAssertEqual(crdtDictionary["key"]?.value, "value2")
+        XCTAssertEqual(crdtDictionary["key"], "value2")
     }
     
     /**
@@ -35,7 +35,7 @@ final class CRDTDictionaryTests: XCTestCase {
         crdtDictionary.add(key: "key", value: "value2", timestamp: Date.distantPast.timeIntervalSince1970)
         XCTAssertEqual(crdtDictionary.additions.count, 1)
         XCTAssertNotNil(crdtDictionary["key"])
-        XCTAssertEqual(crdtDictionary["key"]?.value, "value")
+        XCTAssertEqual(crdtDictionary["key"], "value")
     }
     
     /**
@@ -80,7 +80,7 @@ final class CRDTDictionaryTests: XCTestCase {
         XCTAssertEqual(crdtDictionary.additions.count, 1)
         XCTAssertEqual(crdtDictionary.removals.count, 1)
         XCTAssertNotNil(crdtDictionary["key"])
-        XCTAssertEqual(crdtDictionary["key"]?.value, "value")
+        XCTAssertEqual(crdtDictionary["key"], "value")
     }
     
     // MARK: - Update
@@ -95,7 +95,7 @@ final class CRDTDictionaryTests: XCTestCase {
         XCTAssertEqual(crdtDictionary.additions.count, 1)
         XCTAssertEqual(crdtDictionary.removals.count, 0)
         XCTAssertNotNil(crdtDictionary["key"])
-        XCTAssertEqual(crdtDictionary["key"]?.value, "value2")
+        XCTAssertEqual(crdtDictionary["key"], "value2")
     }
     
     /**
@@ -107,7 +107,7 @@ final class CRDTDictionaryTests: XCTestCase {
         crdtDictionary.remove(key: "key", value: "value")
         crdtDictionary.update(key: "key", value: "value2")
         XCTAssertNil(crdtDictionary["key"])
-        XCTAssertNotEqual(crdtDictionary["key"]?.value, "value2")
+        XCTAssertNotEqual(crdtDictionary["key"], "value2")
     }
     
     /**
@@ -120,7 +120,7 @@ final class CRDTDictionaryTests: XCTestCase {
         crdtDictionary.add(key: "key", value: "value", timestamp: Date.now.addingTimeInterval(1).timeIntervalSince1970)
         crdtDictionary.update(key: "key", value: "value2", timestamp: Date.now.addingTimeInterval(2).timeIntervalSince1970)
         XCTAssertNotNil(crdtDictionary["key"])
-        XCTAssertEqual(crdtDictionary["key"]?.value, "value2")
+        XCTAssertEqual(crdtDictionary["key"], "value2")
     }
     
     // MARK: - Merge
@@ -139,8 +139,8 @@ final class CRDTDictionaryTests: XCTestCase {
         crdtDictionary.merge(with: otherCrdtDictionary)
 
         XCTAssertEqual(crdtDictionary.additions.count, 2)
-        XCTAssertEqual(crdtDictionary["key"]?.value, "value")
-        XCTAssertEqual(crdtDictionary["key2"]?.value, "value2")
+        XCTAssertEqual(crdtDictionary["key"], "value")
+        XCTAssertEqual(crdtDictionary["key2"], "value2")
     }
     
     /**
@@ -163,8 +163,8 @@ final class CRDTDictionaryTests: XCTestCase {
 
         XCTAssertEqual(crdtDictionary.additions.count, 2)
         XCTAssertEqual(crdtDictionary.removals.count, 2)
-        XCTAssertEqual(crdtDictionary["key"]?.value, "value2")
-        XCTAssertEqual(crdtDictionary["key2"]?.value, "value3")
+        XCTAssertEqual(crdtDictionary["key"], "value2")
+        XCTAssertEqual(crdtDictionary["key2"], "value3")
     }
     
     /**
@@ -188,8 +188,8 @@ final class CRDTDictionaryTests: XCTestCase {
 
         XCTAssertEqual(crdtDictionary.additions.count, 2)
         XCTAssertEqual(crdtDictionary.removals.count, 2)
-        XCTAssertEqual(crdtDictionary["key"]?.value, "value2")
-        XCTAssertEqual(crdtDictionary["key2"]?.value, "value3")
+        XCTAssertEqual(crdtDictionary["key"], "value2")
+        XCTAssertEqual(crdtDictionary["key2"], "value3")
     }
     
     /**
@@ -214,8 +214,8 @@ final class CRDTDictionaryTests: XCTestCase {
 
         XCTAssertEqual(firstMergeDictionary.additions.count, secondMergeDictionary.additions.count)
         XCTAssertEqual(firstMergeDictionary.removals.count, secondMergeDictionary.removals.count)
-        XCTAssertEqual(firstMergeDictionary["key"]?.value, secondMergeDictionary["key"]?.value)
-        XCTAssertEqual(firstMergeDictionary["key2"]?.value, secondMergeDictionary["key2"]?.value)
+        XCTAssertEqual(firstMergeDictionary["key"], secondMergeDictionary["key"])
+        XCTAssertEqual(firstMergeDictionary["key2"], secondMergeDictionary["key2"])
     }
     
     /**
@@ -239,7 +239,7 @@ final class CRDTDictionaryTests: XCTestCase {
 
         XCTAssertEqual(crdtDictionary.additions.count, otherCrdtDictionary.additions.count)
         XCTAssertEqual(crdtDictionary.removals.count, otherCrdtDictionary.removals.count)
-        XCTAssertEqual(crdtDictionary["key"]?.value, otherCrdtDictionary["key"]?.value)
-        XCTAssertEqual(crdtDictionary["key2"]?.value, otherCrdtDictionary["key2"]?.value)
+        XCTAssertEqual(crdtDictionary["key"], otherCrdtDictionary["key"])
+        XCTAssertEqual(crdtDictionary["key2"], otherCrdtDictionary["key2"])
     }
 }
